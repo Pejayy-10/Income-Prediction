@@ -4,5 +4,6 @@ matplotlib
 seaborn
 scikit-learn
 django
-django-crispy-forms
-crispy-bootstrap4
+django-tailwind
+django-browser-reload
+django-compressor
