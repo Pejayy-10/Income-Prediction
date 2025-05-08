@@ -270,4 +270,4 @@ for i, (idx, sample) in enumerate(samples.iterrows()):
     print(f"  Predicted label: {'Income >50K' if predictions[i] == 1 else 'Income <=50K'}")
     print()
 
-print("Data science pipeline completed!")
+print("Data science pipeline completed!")   
