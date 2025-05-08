@@ -6,11 +6,15 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.feature_selection import SelectKBest, f_classif
 import pickle
+import warnings
+
+# Suppress warnings for cleaner output
+warnings.filterwarnings('ignore')
 
 # 1. Data Loading and Initial Exploration
 print("Loading dataset...")
@@ -22,106 +26,139 @@ column_names = [
 ]
 
 # Load the dataset
-df = pd.read_csv('adult.data', names=column_names, sep=', ', engine='python')
+try:
+    # Try to load with comma-space separator
+    df = pd.read_csv('adult.data', names=column_names, sep=', ', engine='python')
+except:
+    # If that fails, try with comma separator
+    df = pd.read_csv('adult.data', names=column_names, sep=',', engine='python')
+
 print(f"Dataset shape: {df.shape}")
 print("\nFirst 5 rows:")
 print(df.head())
-print("\nData info:")
-print(df.info())
-print("\nDescriptive statistics:")
-print(df.describe())
 
 # 2. Data Cleaning
 print("\n--- Data Cleaning ---")
 # Check for missing values (in this dataset, missing values are marked as '?')
-print("Missing values (marked as '?'):")
+print("Checking for missing values (marked as '?'):")
+missing_counts = {}
 for column in df.columns:
-    missing_count = (df[column] == ' ?').sum()
+    # Check for both ' ?' and '?' values
+    missing_count = (df[column] == ' ?').sum() + (df[column] == '?').sum()
     if missing_count > 0:
+        missing_counts[column] = missing_count
         print(f"{column}: {missing_count}")
 
 # Replace '?' with NaN and then handle missing values
 for column in df.columns:
-    df[column] = df[column].replace(' ?', np.nan)
+    df[column] = df[column].replace(' ?', np.nan).replace('?', np.nan)
 
-# Handle missing values - for simplicity, we'll drop rows with missing values
-# In a real project, you might want to use imputation instead
-df_cleaned = df.dropna()
-print(f"Shape after removing missing values: {df_cleaned.shape}")
+# For categorical columns with missing values, replace with the most frequent value
+for column in df.select_dtypes(include=['object']).columns:
+    if df[column].isna().sum() > 0:
+        most_frequent = df[column].mode()[0]
+        df[column].fillna(most_frequent, inplace=True)
+
+# For numerical columns with missing values, replace with the median
+for column in df.select_dtypes(include=['int64', 'float64']).columns:
+    if df[column].isna().sum() > 0:
+        median_value = df[column].median()
+        df[column].fillna(median_value, inplace=True)
+
+print(f"Shape after handling missing values: {df.shape}")
 
 # Check for duplicates
-duplicates = df_cleaned.duplicated().sum()
+duplicates = df.duplicated().sum()
 print(f"Number of duplicate rows: {duplicates}")
 if duplicates > 0:
-    df_cleaned = df_cleaned.drop_duplicates()
+    df = df.drop_duplicates()
     print("Duplicates removed.")
 
 # 3. Feature Engineering
 print("\n--- Feature Engineering ---")
 # Strip leading/trailing whitespace from string columns
-for column in df_cleaned.select_dtypes(include=['object']).columns:
-    df_cleaned[column] = df_cleaned[column].str.strip()
+for column in df.select_dtypes(include=['object']).columns:
+    df[column] = df[column].str.strip()
 
 # Create age groups
-df_cleaned['age_group'] = pd.cut(
-    df_cleaned['age'], 
+df['age_group'] = pd.cut(
+    df['age'], 
     bins=[0, 25, 35, 45, 55, 65, 100], 
     labels=['<25', '25-35', '35-45', '45-55', '55-65', '65+']
 )
 
 # Create hours worked category
-df_cleaned['work_intensity'] = pd.cut(
-    df_cleaned['hours_per_week'], 
+df['work_intensity'] = pd.cut(
+    df['hours_per_week'], 
     bins=[0, 20, 40, 60, 100], 
     labels=['Part-time', 'Full-time', 'Overtime', 'Workaholic']
 )
 
 # Create a feature for education level (simplified)
 education_map = {
-    ' Preschool': 'Low',
-    ' 1st-4th': 'Low',
-    ' 5th-6th': 'Low',
-    ' 7th-8th': 'Low',
-    ' 9th': 'Low',
-    ' 10th': 'Medium',
-    ' 11th': 'Medium',
-    ' 12th': 'Medium',
-    ' HS-grad': 'Medium',
-    ' Some-college': 'Medium',
-    ' Assoc-voc': 'High',
-    ' Assoc-acdm': 'High',
-    ' Bachelors': 'High',
-    ' Masters': 'Very High',
-    ' Prof-school': 'Very High',
-    ' Doctorate': 'Very High'
+    'Preschool': 'Low',
+    '1st-4th': 'Low',
+    '5th-6th': 'Low',
+    '7th-8th': 'Low',
+    '9th': 'Low',
+    '10th': 'Medium',
+    '11th': 'Medium',
+    '12th': 'Medium',
+    'HS-grad': 'Medium',
+    'Some-college': 'Medium',
+    'Assoc-voc': 'High',
+    'Assoc-acdm': 'High',
+    'Bachelors': 'High',
+    'Masters': 'Very High',
+    'Prof-school': 'Very High',
+    'Doctorate': 'Very High'
 }
-df_cleaned['education_level'] = df_cleaned['education'].map(education_map)
+
+# Apply education mapping, handling potential missing keys
+df['education_level'] = df['education'].apply(
+    lambda x: education_map.get(x, 'Medium') if pd.notna(x) else 'Medium'
+)
 
 # 4. Target Preparation
 print("\n--- Target Preparation ---")
 # The target is already binary, but let's clean it up
-df_cleaned['income'] = df_cleaned['income'].apply(lambda x: 1 if x == ' >50K' else 0)
-print(f"Target variable distribution:\n{df_cleaned['income'].value_counts()}")
+# Check unique values in income column
+print(f"Unique values in income column: {df['income'].unique()}")
+
+# Clean up the income column - handle different possible formats
+df['income'] = df['income'].apply(
+    lambda x: 1 if ('>50K' in str(x) or '>50k' in str(x).lower()) else 0
+)
+
+print(f"Target variable distribution:\n{df['income'].value_counts()}")
+print(f"Target variable distribution (percentage):\n{df['income'].value_counts(normalize=True) * 100}")
+
+# Check if we have both classes
+if len(df['income'].unique()) < 2:
+    raise ValueError("Target variable has less than 2 classes. Check your data preprocessing steps.")
 
 # 5. Feature Selection
 print("\n--- Feature Selection ---")
 # Identify categorical and numerical columns
-categorical_cols = df_cleaned.select_dtypes(include=['object', 'category']).columns.tolist()
-numerical_cols = df_cleaned.select_dtypes(include=['int64', 'float64']).columns.tolist()
+categorical_cols = df.select_dtypes(include=['object', 'category']).columns.tolist()
+numerical_cols = df.select_dtypes(include=['int64', 'float64']).columns.tolist()
 
 # Remove target from features
 if 'income' in numerical_cols:
     numerical_cols.remove('income')
 
 # Select K best features
-X = df_cleaned.drop(columns=['income'])
-y = df_cleaned['income']
+X = df.drop(columns=['income'])
+y = df['income']
 
 # Using SelectKBest for numerical features
-selector = SelectKBest(f_classif, k=min(10, len(numerical_cols)))
-selector.fit(df_cleaned[numerical_cols], y)
-selected_numerical = [numerical_cols[i] for i in selector.get_support(indices=True)]
-print(f"Selected numerical features: {selected_numerical}")
+if len(numerical_cols) > 0:
+    selector = SelectKBest(f_classif, k=min(10, len(numerical_cols)))
+    selector.fit(df[numerical_cols], y)
+    selected_numerical = [numerical_cols[i] for i in selector.get_support(indices=True)]
+    print(f"Selected numerical features: {selected_numerical}")
+else:
+    selected_numerical = []
 
 # For categorical features, we'll select based on chi-squared test
 # For simplicity, we'll keep all categorical features except those we created
@@ -133,12 +170,16 @@ print(f"Total selected features: {len(selected_features)}")
 
 # 6. Data Processing
 print("\n--- Data Processing ---")
-# Split the data
-X = df_cleaned[selected_features]
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Split the data - use stratify to maintain class distribution
+X = df[selected_features]
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
 
 print(f"Training set shape: {X_train.shape}")
 print(f"Testing set shape: {X_test.shape}")
+print(f"Training set target distribution: {pd.Series(y_train).value_counts(normalize=True) * 100}")
+print(f"Testing set target distribution: {pd.Series(y_test).value_counts(normalize=True) * 100}")
 
 # Create preprocessing pipeline
 numerical_transformer = Pipeline(steps=[
@@ -157,11 +198,10 @@ preprocessor = ColumnTransformer(
 
 # 7. Model Training and Comparison
 print("\n--- Model Training and Comparison ---")
-# Define models to compare
+# Define models to compare - removing Gradient Boosting which was causing issues
 models = {
-    'Random Forest': RandomForestClassifier(random_state=42),
-    'Gradient Boosting': GradientBoostingClassifier(random_state=42),
-    'Logistic Regression': LogisticRegression(random_state=42, max_iter=1000)
+    'Random Forest': RandomForestClassifier(random_state=42, n_estimators=100, class_weight='balanced'),
+    'Logistic Regression': LogisticRegression(random_state=42, max_iter=1000, class_weight='balanced')
 }
 
 best_accuracy = 0
