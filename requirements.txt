@@ -4,6 +4,3 @@ matplotlib
 seaborn
 scikit-learn
 django
-django-tailwind
-django-browser-reload
-django-compressor
