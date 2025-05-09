@@ -1,0 +1,382 @@
+{% extends "predictor/base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative overflow-hidden bg-gradient-to-br from-primary-600 to-secondary-700 text-white">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 z-0 opacity-10">
+        <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+            <defs>
+                <pattern id="pattern" width="100" height="100" patternUnits="userSpaceOnUse">
+                    <circle cx="50" cy="50" r="20" fill="white" />
+                </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#pattern)" />
+        </svg>
+    </div>
+    
+    <!-- Floating Elements -->
+    <div class="absolute top-20 left-10 w-16 h-16 bg-white opacity-10 rounded-full floating"></div>
+    <div class="absolute bottom-20 right-10 w-20 h-20 bg-white opacity-10 rounded-full floating" style="animation-delay: 1s;"></div>
+    <div class="absolute top-1/2 right-1/4 w-12 h-12 bg-white opacity-10 rounded-full floating" style="animation-delay: 2s;"></div>
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 relative z-10">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="animate-fade-in">
+                <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+                    Predict Your Income Potential with AI
+                </h1>
+                <p class="text-xl mb-8 text-white text-opacity-90">
+                    Our advanced machine learning model analyzes your demographic and employment data to provide accurate income predictions and personalized financial advice.
+                </p>
+                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                    <a href="{% url 'predict' %}" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-primary-700 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-700 focus:ring-white transition-all duration-200 shadow-lg btn-hover-float">
+                        <i class="fas fa-chart-line mr-2"></i> Get Started
+                    </a>
+                    <a href="#how-it-works" class="inline-flex items-center justify-center px-6 py-3 border-2 border-white text-base font-medium rounded-md text-white hover:bg-white hover:bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-700 focus:ring-white transition-all duration-200">
+                        <i class="fas fa-info-circle mr-2"></i> Learn More
+                    </a>
+                </div>
+            </div>
+            
+            <div class="hidden lg:block">
+                <div class="relative">
+                    <!-- Decorative Elements -->
+                    <div class="absolute -top-6 -left-6 w-12 h-12 bg-yellow-400 rounded-full animate-float" style="animation-delay: 0.5s;"></div>
+                    <div class="absolute -bottom-6 -right-6 w-12 h-12 bg-green-400 rounded-full animate-float" style="animation-delay: 1s;"></div>
+                    <div class="absolute top-1/2 -right-4 w-8 h-8 bg-red-400 rounded-full animate-float" style="animation-delay: 1.5s;"></div>
+                    
+                    <!-- Glass Card -->
+                    <div class="glass rounded-xl p-6 shadow-glass-xl animate-fade-in">
+                        <div class="flex items-center mb-4">
+                            <div class="flex space-x-1">
+                                <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                                <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                            </div>
+                            <div class="ml-4 text-sm font-medium">Income Prediction System</div>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center text-primary-600">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-medium text-gray-900">Personal Information</h3>
+                                    <p class="text-xs text-gray-500">Age: 35, Education: Bachelors, Occupation: Tech</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center text-primary-600">
+                                    <i class="fas fa-briefcase"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-medium text-gray-900">Employment Details</h3>
+                                    <p class="text-xs text-gray-500">Work Class: Private, Hours per Week: 45</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center text-primary-600">
+                                    <i class="fas fa-chart-pie"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-medium text-gray-900">Financial Data</h3>
+                                    <p class="text-xs text-gray-500">Capital Gain: $2,500, Capital Loss: $0</p>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-success-50 p-3 rounded-lg border border-success-100">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 bg-success-100 rounded-full flex items-center justify-center text-success-600">
+                                        <i class="fas fa-check"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <h3 class="text-sm font-medium text-gray-900">Prediction Result</h3>
+                                        <div class="flex items-center">
+                                            <p class="text-xs text-success-600 font-medium">Income >$50K</p>
+                                            <span class="ml-2 px-2 py-0.5 text-xs font-medium rounded-full bg-success-100 text-success-800">87% confidence</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Wave Divider -->
+    <div class="absolute bottom-0 left-0 right-0">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+            <path fill="#ffffff" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,149.3C960,160,1056,160,1152,138.7C1248,117,1344,75,1392,53.3L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section id="how-it-works" class="py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4" data-animate="animate-fade-in">How It Works</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto" data-animate="animate-fade-in">Our AI-powered income prediction system uses machine learning to analyze your data and provide accurate predictions.</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="bg-white rounded-xl shadow-xl p-6 transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl" data-animate="animate-slide-up">
+                <div class="w-16 h-16 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center text-white mb-4">
+                    <i class="fas fa-user-plus text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Create Your Profile</h3>
+                <p class="text-gray-600">Enter your demographic and employment information to create your profile. This data will be used to make your prediction.</p>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-xl p-6 transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl" data-animate="animate-slide-up animate-delay-100">
+                <div class="w-16 h-16 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center text-white mb-4">
+                    <i class="fas fa-brain text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">AI Analysis</h3>
+                <p class="text-gray-600">Our advanced machine learning model analyzes your data and predicts whether your income is likely to be above or below $50K.</p>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-xl p-6 transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl" data-animate="animate-slide-up animate-delay-200">
+                <div class="w-16 h-16 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center text-white mb-4">
+                    <i class="fas fa-lightbulb text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Receive Financial Advice</h3>
+                <p class="text-gray-600">Based on your prediction, you'll receive personalized financial advice tailored to your specific situation and goals.</p>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-xl p-6 transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl" data-animate="animate-slide-up animate-delay-300">
+                <div class="w-16 h-16 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center text-white mb-4">
+                    <i class="fas fa-chart-line text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Track Your Progress</h3>
+                <p class="text-gray-600">Use our dashboard to track your predictions over time, visualize your progress, and see how changes in your profile affect your income potential.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4" data-animate="animate-fade-in">Key Features</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto" data-animate="animate-fade-in">Our income prediction system offers a range of features to help you understand and improve your financial situation.</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-white rounded-xl shadow-xl overflow-hidden" data-animate="animate-fade-in">
+                <div class="h-48 bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center">
+                    <i class="fas fa-robot text-white text-5xl"></i>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Advanced AI Model</h3>
+                    <p class="text-gray-600 mb-4">Our machine learning model has been trained on the Census Income Dataset and achieves over 85% accuracy in predicting income levels.</p>
+                    <ul class="space-y-2">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-success-500 mr-2"></i>
+                            <span class="text-gray-600">Random Forest Algorithm</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-success-500 mr-2"></i>
+                            <span class="text-gray-600">Feature Importance Analysis</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-success-500 mr-2"></i>
+                            <span class="text-gray-600">High Prediction Accuracy</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-xl overflow-hidden" data-animate="animate-fade-in animate-delay-100">
+                <div class="h-48 bg-gradient-to-br from-success-500 to-success-700 flex items-center justify-center">
+                    <i class="fas fa-hand-holding-usd text-white text-5xl"></i>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Personalized Financial Advice</h3>
+                    <p class="text-gray-600 mb-4">Receive tailored financial recommendations based on your prediction and profile information.</p>
+                    <ul class="space-y-2">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-success-500 mr-2"></i>
+                            <span class="text-gray-600">Career Development Tips</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-success-500 mr-2"></i>
+                            <span class="text-gray-600">Education Investment Advice</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-success-500 mr-2"></i>
+                            <span class="text-gray-600">Savings and Investment Strategies</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-xl overflow-hidden" data-animate="animate-fade-in animate-delay-200">
+                <div class="h-48 bg-gradient-to-br from-warning-500 to-warning-700 flex items-center justify-center">
+                    <i class="fas fa-chart-bar text-white text-5xl"></i>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Interactive Dashboard</h3>
+                    <p class="text-gray-600 mb-4">Track your predictions and visualize your progress over time with our interactive dashboard.</p>
+                    <ul class="space-y-2">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-success-500 mr-2"></i>
+                            <span class="text-gray-600">Historical Prediction Data</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-success-500 mr-2"></i>
+                            <span class="text-gray-600">Interactive Charts and Graphs</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-success-500 mr-2"></i>
+                            <span class="text-gray-600">Progress Tracking</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4" data-animate="animate-fade-in">What Our Users Say</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto" data-animate="animate-fade-in">Hear from people who have used our income prediction system to improve their financial future.</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-white rounded-xl shadow-xl p-6 relative" data-animate="animate-fade-in">
+                <div class="absolute -top-5 left-5 w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center text-white">
+                    <i class="fas fa-quote-left"></i>
+                </div>
+                <div class="pt-4">
+                    <p class="text-gray-600 mb-6">"The income prediction was spot on! The financial advice I received helped me make better career decisions and increase my income within a year."</p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-500">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h4 class="text-sm font-medium text-gray-900">Sarah Johnson</h4>
+                            <p class="text-xs text-gray-500">Software Developer</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-xl p-6 relative" data-animate="animate-fade-in animate-delay-100">
+                <div class="absolute -top-5 left-5 w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center text-white">
+                    <i class="fas fa-quote-left"></i>
+                </div>
+                <div class="pt-4">
+                    <p class="text-gray-600 mb-6">"I was skeptical at first, but the AI model accurately predicted my income range. The advice on education investments was particularly helpful."</p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-500">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h4 class="text-sm font-medium text-gray-900">Michael Chen</h4>
+                            <p class="text-xs text-gray-500">Marketing Specialist</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-xl p-6 relative" data-animate="animate-fade-in animate-delay-200">
+                <div class="absolute -top-5 left-5 w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center text-white">
+                    <i class="fas fa-quote-left"></i>
+                </div>
+                <div class="pt-4">
+                    <p class="text-gray-600 mb-6">"The dashboard feature is amazing! I can track my progress over time and see how changes in my career affect my income potential."</p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-500">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h4 class="text-sm font-medium text-gray-900">Emily Rodriguez</h4>
+                            <p class="text-xs text-gray-500">Financial Analyst</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-gradient-to-br from-primary-600 to-secondary-700 rounded-2xl shadow-xl overflow-hidden">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div class="p-8 md:p-12">
+                    <h2 class="text-3xl font-bold text-white mb-4" data-animate="animate-fade-in">Ready to boost your financial future?</h2>
+                    <p class="text-xl text-white text-opacity-90 mb-8" data-animate="animate-fade-in">Get started with our income prediction system today and receive personalized financial advice to help you achieve your goals.</p>
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                        <a href="{% url 'register' %}" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-primary-700 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-700 focus:ring-white transition-all duration-200 shadow-lg btn-hover-float">
+                            <i class="fas fa-user-plus mr-2"></i> Create Account
+                        </a>
+                        <a href="{% url 'login' %}" class="inline-flex items-center justify-center px-6 py-3 border-2 border-white text-base font-medium rounded-md text-white hover:bg-white hover:bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-700 focus:ring-white transition-all duration-200">
+                            <i class="fas fa-sign-in-alt mr-2"></i> Login
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="hidden md:block relative h-full">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="w-64 h-64 bg-white bg-opacity-10 rounded-full"></div>
+                    </div>
+                    <div class="relative h-full flex items-center justify-center p-8">
+                        <div class="glass rounded-xl p-6 shadow-glass-xl animate-float">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-white">
+                                        <i class="fas fa-chart-pie"></i>
+                                    </div>
+                                    <h3 class="ml-3 text-lg font-bold text-white">Income Prediction</h3>
+                                </div>
+                                <div class="bg-success-500 text-white text-xs px-2 py-1 rounded-full">87% Confidence</div>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-white bg-opacity-10 p-3 rounded-lg">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-white text-sm">Prediction:</span>
+                                        <span class="text-white font-bold">Income >$50K</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white bg-opacity-10 p-3 rounded-lg">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-white text-sm">Confidence:</span>
+                                        <span class="text-white font-bold">87%</span>
+                                    </div>
+                                    <div class="w-full bg-white bg-opacity-20 rounded-full h-2">
+                                        <div class="bg-success-500 h-2 rounded-full" style="width: 87%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-success-500 bg-opacity-20 p-3 rounded-lg">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-lightbulb text-success-300 mr-2"></i>
+                                        <span class="text-white text-sm">Your education level is a key factor in your high income prediction.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

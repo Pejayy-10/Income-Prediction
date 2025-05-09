@@ -1,0 +1,177 @@
+{% extends "predictor/base.html" %}
+
+{% block title %}Prediction Results{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
+    <div class="max-w-3xl mx-auto">
+        <div class="mb-6">
+            <a href="{% url 'dashboard' %}" class="inline-flex items-center text-sm text-gray-600 hover:text-primary-600 transition-colors duration-200">
+                <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard
+            </a>
+        </div>
+        
+        <div class="glass-card rounded-xl shadow-glass-xl overflow-hidden mb-8">
+            <div class="px-6 py-5 {% if prediction.prediction %}bg-gradient-to-r from-success-600 to-success-700{% else %}bg-gradient-to-r from-warning-600 to-warning-700{% endif %} text-white">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold">Your Income Prediction</h3>
+                    <span class="text-sm bg-white bg-opacity-20 px-3 py-1 rounded-full">{{ prediction.date|date:"F j, Y" }}</span>
+                </div>
+                <p class="mt-1 text-sm opacity-90">Based on your demographic and employment information</p>
+            </div>
+            
+            <div class="p-6">
+                <div class="text-center py-8 animate-bounce-in">
+                    {% if prediction.prediction %}
+                    <div class="inline-flex items-center justify-center h-24 w-24 rounded-full bg-gradient-to-br from-success-500 to-success-600 text-white mb-4">
+                        <i class="fas fa-arrow-up text-3xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Income >$50K</h2>
+                    <p class="text-gray-600">Your profile indicates a high income potential</p>
+                    {% else %}
+                    <div class="inline-flex items-center justify-center h-24 w-24 rounded-full bg-gradient-to-br from-warning-500 to-warning-600 text-white mb-4">
+                        <i class="fas fa-arrow-down text-3xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Income ≤$50K</h2>
+                    <p class="text-gray-600">Your profile indicates a moderate income potential</p>
+                    {% endif %}
+                </div>
+                
+                <div class="mt-8">
+                    <h4 class="text-lg font-medium text-gray-900 mb-4">Confidence Level</h4>
+                    <div class="w-full bg-gray-200 rounded-full h-4 mb-2">
+                        <div class="{% if prediction.prediction %}bg-success-500{% else %}bg-warning-500{% endif %} h-4 rounded-full animate-pulse-slow confidence-bar" data-width="{{ prediction.confidence|floatformat:0 }}"></div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-500">0%</span>
+                        <span class="text-sm font-medium {% if prediction.prediction %}text-success-600{% else %}text-warning-600{% endif %}">{{ prediction.confidence|floatformat:2 }}%</span>
+                        <span class="text-sm text-gray-500">100%</span>
+                    </div>
+                </div>
+                
+                <div class="mt-8 border-t border-gray-200 pt-6">
+                    <h4 class="text-lg font-medium text-gray-900 mb-4">Key Factors</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center text-white">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h5 class="text-sm font-medium text-gray-900">Education</h5>
+                                    <p class="text-sm text-gray-600">{{ prediction.user_profile.education }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center text-white">
+                                    <i class="fas fa-briefcase"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h5 class="text-sm font-medium text-gray-900">Occupation</h5>
+                                    <p class="text-sm text-gray-600">{{ prediction.user_profile.occupation }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center text-white">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h5 class="text-sm font-medium text-gray-900">Hours per Week</h5>
+                                    <p class="text-sm text-gray-600">{{ prediction.user_profile.hours_per_week }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center text-white">
+                                    <i class="fas fa-coins"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h5 class="text-sm font-medium text-gray-900">Capital Gain</h5>
+                                    <p class="text-sm text-gray-600">${{ prediction.user_profile.capital_gain }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="glass-card rounded-xl shadow-glass-xl overflow-hidden mb-8">
+            <div class="px-6 py-5 bg-gradient-to-r from-primary-600 to-secondary-600 text-white">
+                <h3 class="text-xl font-bold">Personalized Financial Advice</h3>
+                <p class="mt-1 text-sm opacity-90">Based on your prediction and profile</p>
+            </div>
+            
+            <div class="p-6">
+                <div x-data="{ activeTab: 'career' }">
+                    <div class="border-b border-gray-200">
+                        <nav class="-mb-px flex space-x-8 overflow-x-auto" aria-label="Tabs">
+                            {% for category, advice_list in advice_by_category.items %}
+                            <button
+                                @click="activeTab = '{{ category }}'"
+                                :class="activeTab === '{{ category }}' ? 'border-primary-500 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                                class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200"
+                            >
+                                <i class="fas fa-{% if category == 'career' %}briefcase{% elif category == 'education' %}graduation-cap{% elif category == 'investment' %}chart-line{% elif category == 'savings' %}piggy-bank{% else %}lightbulb{% endif %} mr-2"></i>
+                                {{ category|title }}
+                            </button>
+                            {% endfor %}
+                        </nav>
+                    </div>
+                    
+                    {% for category, advice_list in advice_by_category.items %}
+                    <div x-show="activeTab === '{{ category }}'" class="py-6 animate-fade-in">
+                        <ul class="space-y-4">
+                            {% for advice in advice_list %}
+                            <li class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center text-white">
+                                            <i class="fas fa-{% if category == 'career' %}briefcase{% elif category == 'education' %}graduation-cap{% elif category == 'investment' %}chart-line{% elif category == 'savings' %}piggy-bank{% else %}lightbulb{% endif %}"></i>
+                                        </div>
+                                    </div>
+                                    <div class="ml-4">
+                                        <p class="text-gray-700">{{ advice.advice }}</p>
+                                    </div>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="flex justify-center space-x-4">
+            <a href="{% url 'predict' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-700 hover:to-secondary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200 btn-hover-float">
+                <i class="fas fa-plus mr-2"></i> Make Another Prediction
+            </a>
+            <a href="{% url 'dashboard' %}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200">
+                <i class="fas fa-chart-bar mr-2"></i> View Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set widths for confidence bars
+        var confidenceBars = document.querySelectorAll('.confidence-bar');
+        confidenceBars.forEach(function(bar) {
+            var width = bar.getAttribute('data-width') || '0';
+            bar.style.width = width + '%';
+        });
+    });
+</script>
+{% endblock %}

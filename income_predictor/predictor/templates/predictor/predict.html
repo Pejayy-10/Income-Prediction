@@ -1,0 +1,311 @@
+{% extends "predictor/base.html" %}
+
+{% block title %}Make Prediction{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
+    <div class="max-w-3xl mx-auto">
+        <div class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Income Prediction Form</h1>
+            <p class="text-gray-600">Fill out the form below to get your personalized income prediction and financial advice.</p>
+        </div>
+        
+        <div class="glass-card rounded-xl shadow-glass-xl overflow-hidden">
+            <div class="px-6 py-5 bg-gradient-to-r from-primary-600 to-secondary-600 text-white">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-white mr-3">
+                        <i class="fas fa-user-edit"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold">Your Information</h3>
+                        <p class="text-sm opacity-90">All fields are required for accurate prediction</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-6">
+                <form method="post" action="{% url 'predict' %}" class="space-y-6" x-data="{ currentStep: 1 }">
+                    {% csrf_token %}
+                    
+                    <!-- Progress Bar -->
+                    <div class="relative pt-1">
+                        <div class="flex mb-2 items-center justify-between">
+                            <div>
+                                <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-primary-600 bg-primary-100" x-text="'Step ' + currentStep + ' of 4'">
+                                    Step 1 of 4
+                                </span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xs font-semibold inline-block text-primary-600" x-text="Math.round((currentStep / 4) * 100) + '%'">
+                                    25%
+                                </span>
+                            </div>
+                        </div>
+                        <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-primary-100">
+                            <div :style="'width:' + (currentStep / 4 * 100) + '%'" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-primary-500 to-secondary-500 transition-all duration-500 ease-in-out"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 1: Personal Information -->
+                    <div x-show="currentStep === 1" class="space-y-6 animate-fade-in">
+                        <h4 class="text-lg font-medium text-gray-900 border-b pb-2">Personal Information</h4>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="id_age" class="block text-sm font-medium text-gray-700">Age</label>
+                                <input type="number" id="id_age" name="age" min="17" max="90" required class="form-input-glass mt-1 block w-full rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm" placeholder="Enter your age">
+                                <p class="mt-1 text-xs text-gray-500">Your current age (between 17 and 90)</p>
+                            </div>
+                            
+                            <div>
+                                <label for="id_sex" class="block text-sm font-medium text-gray-700">Gender</label>
+                                <select id="id_sex" name="sex" required class="form-input-glass mt-1 block w-full rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
+                                    <option value="">Select gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                                <p class="mt-1 text-xs text-gray-500">Your gender identity</p>
+                            </div>
+                            
+                            <div>
+                                <label for="id_race" class="block text-sm font-medium text-gray-700">Race</label>
+                                <select id="id_race" name="race" required class="form-input-glass mt-1 block w-full rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
+                                    <option value="">Select race</option>
+                                    <option value="White">White</option>
+                                    <option value="Black">Black</option>
+                                    <option value="Asian-Pac-Islander">Asian/Pacific Islander</option>
+                                    <option value="Amer-Indian-Eskimo">American Indian/Eskimo</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <p class="mt-1 text-xs text-gray-500">Your racial or ethnic background</p>
+                            </div>
+                            
+                            <div>
+                                <label for="id_native_country" class="block text-sm font-medium text-gray-700">Native Country</label>
+                                <select id="id_native_country" name="native_country" required class="form-input-glass mt-1 block w-full rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
+                                    <option value="">Select country</option>
+                                    <option value="United-States">United States</option>
+                                    <option value="Canada">Canada</option>
+                                    <option value="Mexico">Mexico</option>
+                                    <option value="Philippines">Philippines</option>
+                                    <option value="Germany">Germany</option>
+                                    <option value="India">India</option>
+                                    <option value="Japan">Japan</option>
+                                    <option value="China">China</option>
+                                    <option value="England">England</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <p class="mt-1 text-xs text-gray-500">Country where you were born or have citizenship</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-end">
+                            <button type="button" @click="currentStep = 2" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-700 hover:to-secondary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200 shadow-sm btn-hover-float">
+                                Next <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 2: Education -->
+                    <div x-show="currentStep === 2" class="space-y-6 animate-fade-in">
+                        <h4 class="text-lg font-medium text-gray-900 border-b pb-2">Education</h4>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="id_education" class="block text-sm font-medium text-gray-700">Education Level</label>
+                                <select id="id_education" name="education" required class="form-input-glass mt-1 block w-full rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
+                                    <option value="">Select education level</option>
+                                    <option value="Bachelors">Bachelors</option>
+                                    <option value="HS-grad">High School Graduate</option>
+                                    <option value="Some-college">Some College</option>
+                                    <option value="Masters">Masters</option>
+                                    <option value="Assoc-voc">Associate Degree (Vocational)</option>
+                                    <option value="Assoc-acdm">Associate Degree (Academic)</option>
+                                    <option value="Doctorate">Doctorate</option>
+                                    <option value="Prof-school">Professional School</option>
+                                    <option value="9th">9th Grade</option>
+                                    <option value="10th">10th Grade</option>
+                                    <option value="11th">11th Grade</option>
+                                    <option value="12th">12th Grade (No Diploma)</option>
+                                    <option value="1st-4th">1st-4th Grade</option>
+                                    <option value="5th-6th">5th-6th Grade</option>
+                                    <option value="7th-8th">7th-8th Grade</option>
+                                    <option value="Preschool">Preschool</option>
+                                </select>
+                                <p class="mt-1 text-xs text-gray-500">Your highest level of education completed</p>
+                            </div>
+                            
+                            <div>
+                                <label for="id_education_num" class="block text-sm font-medium text-gray-700">Years of Education</label>
+                                <input type="number" id="id_education_num" name="education_num" min="1" max="16" required class="form-input-glass mt-1 block w-full rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm" placeholder="Enter years of education">
+                                <p class="mt-1 text-xs text-gray-500">Total number of years spent in education (1-16)</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <button type="button" @click="currentStep = 1" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200">
+                                <i class="fas fa-arrow-left mr-2"></i> Previous
+                            </button>
+                            <button type="button" @click="currentStep = 3" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-700 hover:to-secondary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200 shadow-sm btn-hover-float">
+                                Next <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 3: Employment -->
+                    <div x-show="currentStep === 3" class="space-y-6 animate-fade-in">
+                        <h4 class="text-lg font-medium text-gray-900 border-b pb-2">Employment</h4>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="id_workclass" class="block text-sm font-medium text-gray-700">Work Class</label>
+                                <select id="id_workclass" name="workclass" required class="form-input-glass mt-1 block w-full rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
+                                    <option value="">Select work class</option>
+                                    <option value="Private">Private</option>
+                                    <option value="Self-emp-not-inc">Self Employed (Not Incorporated)</option>
+                                    <option value="Self-emp-inc">Self Employed (Incorporated)</option>
+                                    <option value="Federal-gov">Federal Government</option>
+                                    <option value="Local-gov">Local Government</option>
+                                    <option value="State-gov">State Government</option>
+                                    <option value="Without-pay">Without Pay</option>
+                                    <option value="Never-worked">Never Worked</option>
+                                </select>
+                                <p class="mt-1 text-xs text-gray-500">Type of employer or employment situation</p>
+                            </div>
+                            
+                            <div>
+                                <label for="id_occupation" class="block text-sm font-medium text-gray-700">Occupation</label>
+                                <select id="id_occupation" name="occupation" required class="form-input-glass mt-1 block w-full rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
+                                    <option value="">Select occupation</option>
+                                    <option value="Exec-managerial">Executive/Managerial</option>
+                                    <option value="Prof-specialty">Professional Specialty</option>
+                                    <option value="Tech-support">Tech Support</option>
+                                    <option value="Sales">Sales</option>
+                                    <option value="Admin-clerical">Administrative/Clerical</option>
+                                    <option value="Craft-repair">Craft/Repair</option>
+                                    <option value="Machine-op-inspct">Machine Operator/Inspector</option>
+                                    <option value="Transport-moving">Transportation/Moving</option>
+                                    <option value="Handlers-cleaners">Handlers/Cleaners</option>
+                                    <option value="Farming-fishing">Farming/Fishing</option>
+                                    <option value="Protective-serv">Protective Service</option>
+                                    <option value="Priv-house-serv">Private House Service</option>
+                                    <option value="Armed-Forces">Armed Forces</option>
+                                    <option value="Other-service">Other Service</option>
+                                </select>
+                                <p class="mt-1 text-xs text-gray-500">Your current job role or occupation</p>
+                            </div>
+                            
+                            <div>
+                                <label for="id_hours_per_week" class="block text-sm font-medium text-gray-700">Hours per Week</label>
+                                <input type="number" id="id_hours_per_week" name="hours_per_week" min="1" max="99" required class="form-input-glass mt-1 block w-full rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm" placeholder="Enter hours worked per week">
+                                <p class="mt-1 text-xs text-gray-500">Average number of hours you work per week</p>
+                            </div>
+                            
+                            <div>
+                                <label for="id_relationship" class="block text-sm font-medium text-gray-700">Household Relationship</label>
+                                <select id="id_relationship" name="relationship" required class="form-input-glass mt-1 block w-full rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
+                                    <option value="">Select relationship</option>
+                                    <option value="Husband">Husband</option>
+                                    <option value="Wife">Wife</option>
+                                    <option value="Own-child">Own Child</option>
+                                    <option value="Not-in-family">Not in Family</option>
+                                    <option value="Unmarried">Unmarried</option>
+                                    <option value="Other-relative">Other Relative</option>
+                                </select>
+                                <p class="mt-1 text-xs text-gray-500">Your role in your household (e.g., are you a husband, wife, child, etc.)</p>
+                            </div>
+                            
+                            <div>
+                                <label for="id_marital_status" class="block text-sm font-medium text-gray-700">Marital Status</label>
+                                <select id="id_marital_status" name="marital_status" required class="form-input-glass mt-1 block w-full rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
+                                    <option value="">Select marital status</option>
+                                    <option value="Married-civ-spouse">Married (civilian spouse)</option>
+                                    <option value="Divorced">Divorced</option>
+                                    <option value="Never-married">Never married</option>
+                                    <option value="Separated">Separated</option>
+                                    <option value="Widowed">Widowed</option>
+                                    <option value="Married-spouse-absent">Married (spouse absent)</option>
+                                    <option value="Married-AF-spouse">Married (Armed Forces spouse)</option>
+                                </select>
+                                <p class="mt-1 text-xs text-gray-500">Your current marital status</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <button type="button" @click="currentStep = 2" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200">
+                                <i class="fas fa-arrow-left mr-2"></i> Previous
+                            </button>
+                            <button type="button" @click="currentStep = 4" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-700 hover:to-secondary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200 shadow-sm btn-hover-float">
+                                Next <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 4: Financial Information -->
+                    <div x-show="currentStep === 4" class="space-y-6 animate-fade-in">
+                        <h4 class="text-lg font-medium text-gray-900 border-b pb-2">Financial Information</h4>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="id_capital_gain" class="block text-sm font-medium text-gray-700">Capital Gain ($)</label>
+                                <input type="number" id="id_capital_gain" name="capital_gain" min="0" required class="form-input-glass mt-1 block w-full rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm" placeholder="Enter capital gain">
+                                <p class="mt-1 text-xs text-gray-500">Profit from sale of property or investments in the past year</p>
+                            </div>
+                            
+                            <div>
+                                <label for="id_capital_loss" class="block text-sm font-medium text-gray-700">Capital Loss ($)</label>
+                                <input type="number" id="id_capital_loss" name="capital_loss" min="0" required class="form-input-glass mt-1 block w-full rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm" placeholder="Enter capital loss">
+                                <p class="mt-1 text-xs text-gray-500">Loss from sale of property or investments in the past year</p>
+                            </div>
+                            
+                            <div class="md:col-span-2">
+                                <div class="bg-primary-50 p-4 rounded-lg border border-primary-100">
+                                    <div class="flex">
+                                        <div class="flex-shrink-0">
+                                            <i class="fas fa-info-circle text-primary-600"></i>
+                                        </div>
+                                        <div class="ml-3">
+                                            <h3 class="text-sm font-medium text-primary-800">Information</h3>
+                                            <div class="mt-2 text-sm text-primary-700">
+                                                <p>Capital gain refers to profit from the sale of property or an investment. Capital loss refers to a loss from the sale of property or an investment.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <button type="button" @click="currentStep = 3" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200">
+                                <i class="fas fa-arrow-left mr-2"></i> Previous
+                            </button>
+                            <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gradient-to-r from-success-600 to-success-700 hover:from-success-700 hover:to-success-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-success-500 transition-all duration-200 shadow-sm btn-hover-float">
+                                <i class="fas fa-check mr-2"></i> Submit
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Loading Screen -->
+{% include "predictor/components/loading.html" %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        const loadingScreen = document.getElementById('custom-loading-screen');
+        
+        if (form && loadingScreen) {
+            form.addEventListener('submit', function() {
+                loadingScreen.style.display = 'flex';
+                loadingScreen.classList.remove('opacity-0');
+            });
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,220 @@
+{% extends "predictor/base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Your Prediction Dashboard</h1>
+        <p class="text-gray-600">Track your predictions and financial advice over time.</p>
+    </div>
+    
+    {% if predictions %}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2">
+            <div class="glass-card rounded-xl shadow-glass-xl p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-bold text-gray-900">Prediction History</h2>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-info-circle mr-1"></i> Last 10 predictions
+                    </div>
+                </div>
+                <div class="relative" style="height: 300px;">
+                    <canvas id="predictionChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="lg:col-span-1">
+            <div class="glass-card rounded-xl shadow-glass-xl p-6">
+                <h2 class="text-xl font-bold text-gray-900 mb-6">Summary</h2>
+                <div class="space-y-6">
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center text-white">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-gray-500">Total Predictions</p>
+                                <p class="text-2xl font-bold text-gray-900" data-counter="{{ predictions|length }}">{{ predictions|length }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 {% if predictions.0.prediction %}bg-success-100{% else %}bg-warning-100{% endif %} rounded-full flex items-center justify-center {% if predictions.0.prediction %}text-success-600{% else %}text-warning-600{% endif %}">
+                                <i class="fas {% if predictions.0.prediction %}fa-arrow-up{% else %}fa-arrow-down{% endif %}"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-gray-500">Latest Prediction</p>
+                                <p class="text-xl font-bold {% if predictions.0.prediction %}text-success-600{% else %}text-warning-600{% endif %}">
+                                    {% if predictions.0.prediction %}Income >$50K{% else %}Income ≤$50K{% endif %}
+                                </p>
+                                <p class="text-sm text-gray-500">{{ predictions.0.date|date:"F j, Y" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="flex items-center mb-2">
+                            <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center text-white">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-gray-500">Latest Confidence</p>
+                                <p class="text-xl font-bold text-gray-900">{{ predictions.0.confidence|floatformat:2 }}%</p>
+                            </div>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="{% if predictions.0.prediction %}bg-success-500{% else %}bg-warning-500{% endif %} h-2 rounded-full animate-pulse-slow confidence-bar" data-width="{{ predictions.0.confidence|floatformat:0 }}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-8">
+        <div class="glass-card rounded-xl shadow-glass-xl overflow-hidden">
+            <div class="px-6 py-5 border-b border-gray-200 bg-gray-50">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-bold text-gray-900">Prediction History</h3>
+                    <a href="{% url 'predict' %}" class="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-700 hover:to-secondary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200 shadow-sm">
+                        <i class="fas fa-plus mr-1.5"></i> New Prediction
+                    </a>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prediction</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Confidence</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for prediction in predictions %}
+                        <tr class="hover:bg-gray-50 transition-colors duration-150">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ prediction.date|date:"F j, Y" }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {% if prediction.prediction %}bg-success-100 text-success-800{% else %}bg-warning-100 text-warning-800{% endif %}">
+                                    {% if prediction.prediction %}Income >$50K{% else %}Income ≤$50K{% endif %}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="w-24 bg-gray-200 rounded-full h-2 mr-2">
+                                        <div class="{% if prediction.prediction %}bg-success-500{% else %}bg-warning-500{% endif %} h-2 rounded-full confidence-bar" data-width="{{ prediction.confidence|floatformat:0 }}"></div>
+                                    </div>
+                                    <span class="text-sm text-gray-900">{{ prediction.confidence|floatformat:2 }}%</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <a href="{% url 'results' prediction.id %}" class="text-primary-600 hover:text-primary-900 transition-colors duration-150 mr-3">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="glass-card rounded-xl shadow-glass-xl p-8 text-center">
+        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-gray-400 mx-auto mb-4">
+            <i class="fas fa-chart-line text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-2">No predictions yet</h3>
+        <p class="text-gray-600 mb-6">You haven't made any predictions yet. Make your first prediction to see your results here.</p>
+        <a href="{% url 'predict' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-700 hover:to-secondary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200 shadow-sm btn-hover-float">
+            <i class="fas fa-plus mr-2"></i> Make your first prediction
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if predictions %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set widths for confidence bars
+        var confidenceBars = document.querySelectorAll('.confidence-bar');
+        confidenceBars.forEach(function(bar) {
+            var width = bar.getAttribute('data-width') || '0';
+            bar.style.width = width + '%';
+        });
+        
+        // Chart initialization
+        var chartData = {{ chart_data|safe }};
+        
+        var ctx = document.getElementById('predictionChart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: chartData.labels,
+                datasets: [{
+                    label: 'Prediction Confidence',
+                    data: chartData.confidence,
+                    backgroundColor: 'rgba(14, 165, 233, 0.2)',
+                    borderColor: 'rgba(14, 165, 233, 1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    pointBackgroundColor: chartData.predictions.map(function(p) { 
+                        return p === 1 ? 'rgba(34, 197, 94, 1)' : 'rgba(245, 158, 11, 1)';
+                    }),
+                    pointBorderColor: chartData.predictions.map(function(p) {
+                        return p === 1 ? 'rgba(34, 197, 94, 1)' : 'rgba(245, 158, 11, 1)';
+                    }),
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: 'Confidence (%)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            afterLabel: function(context) {
+                                var idx = context.dataIndex;
+                                return chartData.predictions[idx] === 1 ? 'Income >$50K' : 'Income ≤$50K';
+                            }
+                        }
+                    },
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
+                animation: {
+                    duration: 2000,
+                    easing: 'easeOutQuart'
+                }
+            }
+        });
+    });
+</script>
+{% endif %}
+{% endblock %}
