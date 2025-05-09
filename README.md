@@ -1,4 +1,4 @@
-# Income Prediction System - Project Report
+# Income Prediction System
 
 ## Project Overview
 
